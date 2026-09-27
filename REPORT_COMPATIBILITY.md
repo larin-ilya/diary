@@ -103,7 +103,7 @@ google-auth-httplib2>=0.2
 | `requirements-dev.txt` | pytest для тестов |
 | `install.ps1`, `run.ps1` | установка и запуск на Windows (создание `.venv`, проверка драйвера) |
 | `install.sh`, `run.sh` | то же на Linux |
-| `tests/` | 28 автотестов: шифрование, CRUD, персистентность, экспорт/импорт, бэкап |
+| `tests/` | 34 автотеста: шифрование, CRUD, персистентность, экспорт/импорт, бэкап |
 | `scripts/selfcheck.py` | сквозная проверка приложения настоящими процессами |
 | `scripts/compare_dbs.py` | сверка базы с манифестом, снятым на другой ОС |
 | `.github/workflows/ci.yml` | CI-матрица `ubuntu-latest` + `windows-latest` × Python 3.10/3.11/3.12 |
@@ -131,8 +131,8 @@ google-auth-httplib2>=0.2
 
 | Платформа | Результат |
 |---|---|
-| Windows (Python 3.12.8) | **28 passed** |
-| Linux (Python 3.13.5) | **28 passed** |
+| Windows (Python 3.12.8) | **34 passed** |
+| Linux (Python 3.13.5) | **34 passed** |
 
 В ходе разработки единственным падением было отсутствие этого самого отчёта
 (тест `test_delivery_files_exist`); после его создания прогон полностью зелёный на обеих системах.

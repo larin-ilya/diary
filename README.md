@@ -184,7 +184,7 @@ python TUI.py doctor --json
 
 ```bash
 python -m pip install -r requirements-dev.txt
-python -m pytest -q                    # 32 теста: шифрование, CRUD, персистентность
+python -m pytest -q                    # 34 теста: шифрование, CRUD, персистентность
 python scripts/selfcheck.py            # 22 сквозные проверки настоящими процессами
 ```
 
