@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+
+      - name: Show SQLCipher driver version
+        run: python -c "import sqlcipher3; c=sqlcipher3.connect(':memory:'); c.execute(\"PRAGMA key='x'\"); print('cipher_version =', c.execute('PRAGMA cipher_version').fetchone()[0])"
+
+      - name: Unit tests
+        run: python -m pytest -q
+
+      - name: End-to-end self-check
+        run: python scripts/selfcheck.py --workdir .selfcheck
+
+      - name: Upload self-check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfcheck-${{ matrix.os }}-py${{ matrix.python }}
+          path: .selfcheck/
+          if-no-files-found: warn

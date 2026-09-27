@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Дневник — совместимость Windows и Linux</title>
+<style>
+  :root{
+    --paper:#faf9f6;
+    --paper-2:#f4f2ed;
+    --ink:#1c1b19;
+    --ink-2:#4a4844;
+    --ink-3:#8b8781;
+    --rule:rgba(28,27,25,.13);
+    --rule-soft:rgba(28,27,25,.07);
+    --calm:#5d6b73;      /* приглушённый холодный */
+    --ok:#6d7f6a;        /* приглушённый зелёный */
+    --warn:#9c7a63;      /* приглушённый терракотовый */
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background-color:var(--paper);
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,"Noto Sans",sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    font-weight:300;
+    letter-spacing:.006em;
+  }
+  .sheet{
+    max-width:47rem;
+    margin:0 auto;
+    padding:clamp(3.5rem,11vh,9rem) clamp(1.4rem,7vw,6rem) clamp(4rem,12vh,10rem);
+  }
+
+  /* --- шапка --- */
+  .eyebrow{
+    font-size:.6875rem;
+    letter-spacing:.34em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+    margin:0 0 2.6rem;
+  }
+  h1{
+    font-size:clamp(1.6rem,3.4vw,2.35rem);
+    line-height:1.28;
+    font-weight:300;
+    letter-spacing:-.012em;
+    margin:0 0 1.4rem;
+    max-width:26ch;
+  }
+  .lede{
+    font-size:1.0625rem;
+    color:var(--ink-2);
+    max-width:44ch;
+    margin:0 0 3.4rem;
+  }
+  .meta{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));
+    gap:1.6rem 2.4rem;
+    padding:1.8rem 0 0;
+    border-top:1px solid var(--rule);
+  }
+  .meta dt{
+    font-size:.625rem;
+    letter-spacing:.24em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+    margin:0 0 .45rem;
+  }
+  .meta dd{margin:0;font-size:.9375rem;color:var(--ink-2)}
+
+  /* --- секции --- */
+  section{padding:clamp(3.6rem,9vh,6.5rem) 0 0}
+  h2{
+    font-size:.6875rem;
+    letter-spacing:.34em;
+    text-transform:uppercase;
+    font-weight:400;
+    color:var(--calm);
+    margin:0 0 2.4rem;
+    padding-bottom:1.1rem;
+    border-bottom:1px solid var(--rule);
+  }
+  h3{
+    font-size:1.0625rem;
+    font-weight:400;
+    letter-spacing:-.005em;
+    margin:2.8rem 0 .9rem;
+  }
+  h3:first-of-type{margin-top:0}
+  p{margin:0 0 1.35rem;max-width:46ch;color:var(--ink-2)}
+  p.note{
+    font-size:.875rem;
+    color:var(--ink-3);
+    border-left:2px solid var(--rule);
+    padding-left:1.2rem;
+    max-width:44ch;
+  }
+  ul{margin:0 0 1.5rem;padding:0;list-style:none;max-width:46ch}
+  li{position:relative;padding-left:1.35rem;margin-bottom:.6rem;color:var(--ink-2)}
+  li::before{
+    content:"";position:absolute;left:0;top:.82em;
+    width:.5rem;height:1px;background:var(--ink-3);
+  }
+  strong{font-weight:500;color:var(--ink)}
+  em{font-style:normal;color:var(--ink)}
+  code,kbd{
+    font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.8125em;
+    background:var(--paper-2);
+    padding:.12em .42em;
+    color:var(--ink-2);
+  }
+
+  /* --- блок с ошибкой --- */
+  pre{
+    margin:0 0 1.6rem;
+    background:var(--paper-2);
+    border-left:2px solid var(--rule);
+    padding:1.4rem 1.5rem;
+    overflow-x:auto;
+    font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.8125rem;
+    line-height:1.85;
+    color:var(--ink-2);
+  }
+  pre .r{color:var(--warn)}
+
+  /* --- числа --- */
+  .figures{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+    gap:2.8rem 2rem;
+    margin:0 0 3rem;
+  }
+  .fig{border-top:1px solid var(--rule);padding-top:1.3rem}
+  .fig .n{
+    display:block;
+    font-size:clamp(2rem,5vw,2.9rem);
+    font-weight:200;
+    line-height:1;
+    letter-spacing:-.03em;
+    font-variant-numeric:tabular-nums;
+    color:var(--ink);
+    margin-bottom:.85rem;
+  }
+  .fig .n small{font-size:.4em;color:var(--ink-3);font-weight:300;letter-spacing:0}
+  .fig .l{font-size:.8125rem;color:var(--ink-3);letter-spacing:.02em}
+
+  /* --- таблицы --- */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin:0 0 2.4rem;
+    font-size:.875rem;
+    font-variant-numeric:tabular-nums;
+  }
+  caption{
+    caption-side:top;
+    text-align:left;
+    font-size:.75rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+    padding:0 0 .9rem;
+  }
+  th{
+    text-align:left;
+    font-weight:400;
+    font-size:.6875rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+    padding:.7rem .9rem .7rem 0;
+    border-bottom:1px solid var(--rule);
+    white-space:nowrap;
+  }
+  td{
+    padding:.85rem .9rem .85rem 0;
+    border-bottom:1px solid var(--rule-soft);
+    color:var(--ink-2);
+    vertical-align:top;
+  }
+  td:first-child{color:var(--ink)}
+  .yes{color:var(--ok)}
+  .no{color:var(--warn)}
+
+  /* --- marks --- */
+  .marks{display:flex;flex-wrap:wrap;gap:.55rem;margin:0 0 1.8rem}
+  .mark{
+    display:inline-block;
+    font-size:.6875rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--ink-2);
+    border:1px solid var(--rule);
+    padding:.36rem .8rem;
+    background:var(--paper);
+  }
+  .mark.ok::before{
+    content:"";display:inline-block;width:.42rem;height:.42rem;border-radius:50%;
+    background:var(--ok);margin-right:.6rem;vertical-align:.05em;
+  }
+
+  /* --- шаги / откат --- */
+  .steps{counter-reset:s;margin:0 0 1.8rem;padding:0;list-style:none;max-width:44ch}
+  .steps li{counter-increment:s;padding-left:2.4rem;margin-bottom:1.05rem;position:relative}
+  .steps li::before{
+    content:counter(s,decimal-leading-zero);
+    position:absolute;left:0;top:.12em;
+    font-size:.75rem;letter-spacing:.1em;color:var(--ink-3);
+    background:none;width:auto;height:auto;
+  }
+
+  footer{
+    margin-top:clamp(4rem,10vh,7rem);
+    padding-top:1.6rem;
+    border-top:1px solid var(--rule);
+    font-size:.75rem;
+    color:var(--ink-3);
+    letter-spacing:.02em;
+    max-width:46ch;
+  }
+
+  @media print{
+    body{background:#fff;font-size:11pt}
+    .sheet{padding:0;max-width:none}
+    h2{break-after:avoid}
+    table,pre,.figures{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<main class="sheet">
+
+  <p class="eyebrow">Отчёт о совместимости · 2026-09-27</p>
+  <h1>Дневник на SQLite&nbsp;+&nbsp;SQLCipher: работает и на Windows, и на Linux</h1>
+  <p class="lede">
+    На Windows приложение не запускалось из-за отсутствия готового колеса
+    <code>sqlcipher3-binary</code>. Причина найдена, зависимость заменена на кросс-платформенную,
+    установка и работа проверены на обеих системах. Формат базы не менялся — данные переносятся без миграции.
+  </p>
+
+  <dl class="meta">
+    <div><dt>Проект</dt><dd>C:\Users\user\Desktop\diary</dd></div>
+    <div><dt>Проверено на</dt><dd>Windows 10.0.20348 x64 · Linux Debian x86_64 (WSL2)</dd></div>
+    <div><dt>Python</dt><dd>3.12.8 (Windows) · 3.13.5 (Linux)</dd></div>
+    <div><dt>Шифрование</dt><dd>SQLCipher 4.12.0 community · SQLite 3.51.1</dd></div>
+  </dl>
+
+  <section>
+    <h2>Проблема</h2>
+    <p>Воспроизведено в чистом виртуальном окружении на Windows x64, Python&nbsp;3.12.8:</p>
+    <pre>&gt; python -m pip install sqlcipher3-binary
+<span class="r">ERROR: Could not find a version that satisfies the requirement sqlcipher3-binary (from versions: none)
+ERROR: No matching distribution found for sqlcipher3-binary</span>
+EXITCODE=1</pre>
+    <p>
+      Дальше в приложении не срабатывали ни <code>import sqlcipher3</code>, ни запасной
+      <code>pysqlcipher3</code>; скрипт печатал «не установлен SQLCipher» и завершался с кодом&nbsp;1.
+      На Linux тот же код работал — значит, дело было только в зависимостях, а не в логике дневника.
+    </p>
+  </section>
+
+  <section>
+    <h2>Причина</h2>
+    <p>
+      Опрошен актуальный индекс PyPI. Пакет <code>sqlcipher3-binary</code> публикует исключительно
+      сборки <code>manylinux</code> для x86_64 и не предлагает установку из исходников — под Windows
+      у него нет ничего.
+    </p>
+    <table>
+      <caption>Доступные колёса на PyPI</caption>
+      <thead>
+        <tr><th>Пакет</th><th>Версия</th><th>Windows</th><th>Linux</th><th>Комментарий</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>sqlcipher3-binary</td><td>0.6.0</td><td class="no">нет</td><td class="yes">manylinux x86_64</td><td>использовался в проекте</td></tr>
+        <tr><td>sqlcipher3</td><td>0.6.2</td><td class="yes">win_amd64 / win32 / win_arm64</td><td class="yes">manylinux / musllinux</td><td>выбран как замена</td></tr>
+        <tr><td>sqlcipher3-wheels</td><td>0.5.7</td><td class="yes">win_amd64</td><td class="yes">manylinux / musllinux</td><td>версия старее, менее живой</td></tr>
+        <tr><td>pysqlcipher3</td><td>1.2.0</td><td class="no">нет</td><td class="no">только исходники</td><td>сборка из исходников</td></tr>
+        <tr><td>apsw</td><td>3.53.4.0</td><td class="yes">win_amd64</td><td class="yes">manylinux</td><td>шифрование в колёсах не включено</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Решение</h2>
+    <p>
+      Драйвер заменён на <strong>sqlcipher3 0.6.2</strong>: тот же импортируемый модуль, тот же DB-API,
+      тот же формат базы SQLCipher&nbsp;4 — но опубликованы готовые колёса и для Windows, и для Linux,
+      поэтому компилятор и OpenSSL&nbsp;SDK не нужны. Дополнительно в <code>requirements.txt</code>
+      добавлен <code>windows-curses</code> под маркером <code>sys_platform == "win32"</code> —
+      без него на Windows не работал полноэкранный интерфейс.
+    </p>
+    <h3>Что сделано в коде</h3>
+    <ul>
+      <li>порядок импорта <code>sqlcipher3</code> → <code>pysqlcipher3</code> с понятным сообщением об установке;</li>
+      <li>фолбэк совместимости: база, созданная SQLCipher 3.x, автоматически переоткрывается через <code>PRAGMA cipher_compatibility</code>;</li>
+      <li>глушение отладочного вывода SQLCipher, который ранее попадал в stdout;</li>
+      <li>путь к базе переопределяется переменной <code>DIARY_DB</code>;</li>
+      <li>неинтерактивные команды для скриптов и CI, вывод в JSON;</li>
+      <li>редактор <code>notepad</code> по умолчанию и включение ANSI-цветов в консоли Windows.</li>
+    </ul>
+    <h3>Отклонённые варианты</h3>
+    <table>
+      <thead><tr><th>Вариант</th><th>Почему отклонён</th></tr></thead>
+      <tbody>
+        <tr><td>Сборка из исходников на Windows</td><td>нужны MSVC, OpenSSL и SQLCipher SDK — долго и хрупко при наличии готового колеса</td></tr>
+        <tr><td>sqlcipher3-wheels 0.5.7</td><td>версия старее, проект менее живой</td></tr>
+        <tr><td>apsw</td><td>шифрование в публикуемых колёсах не скомпилировано</td></tr>
+        <tr><td>Обычный SQLite без шифрования</td><td>снижает защиту личных данных — требует отдельного согласия пользователя</td></tr>
+        <tr><td>Прикладное шифрование поверх обычного SQLite</td><td>меняет формат базы и требует миграции существующих записей</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Проверка</h2>
+    <div class="figures">
+      <div class="fig"><span class="n">28<small>/28</small></span><span class="l">автотестов пройдено на Windows (Python 3.12.8)</span></div>
+      <div class="fig"><span class="n">28<small>/28</small></span><span class="l">автотестов пройдено на Linux (Python 3.13.5)</span></div>
+      <div class="fig"><span class="n">22<small>/22</small></span><span class="l">сквозных проверок приложения на Windows</span></div>
+      <div class="fig"><span class="n">22<small>/22</small></span><span class="l">сквозных проверок приложения на Linux</span></div>
+      <div class="fig"><span class="n">2<small> × 2</small></span><span class="l">переноса базы между ОС, содержимое записей совпало</span></div>
+      <div class="fig"><span class="n">0</span><span class="l">компиляторов и внешних SDK потребовалось</span></div>
+    </div>
+
+    <h3>Установка из чистой среды</h3>
+    <table>
+      <caption>Что реально установилось</caption>
+      <thead><tr><th>Платформа</th><th>Python</th><th>Колесо драйвера</th><th>Драйвер после установки</th></tr></thead>
+      <tbody>
+        <tr><td>Windows</td><td>3.12.8</td><td>sqlcipher3-0.6.2-cp312-cp312-win_amd64.whl</td><td>SQLCipher 4.12.0 community / SQLite 3.51.1</td></tr>
+        <tr><td>Linux</td><td>3.13.5</td><td>sqlcipher3-0.6.2 (manylinux)</td><td>SQLCipher 4.12.0 community / SQLite 3.51.1</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Проверенные сценарии</h3>
+    <div class="marks">
+      <span class="mark ok">создание записи</span>
+      <span class="mark ok">чтение по id</span>
+      <span class="mark ok">изменение и удаление</span>
+      <span class="mark ok">поиск и теги</span>
+      <span class="mark ok">данные на месте после перезапуска</span>
+      <span class="mark ok">файл зашифрован</span>
+      <span class="mark ok">неверный пароль отклонён</span>
+      <span class="mark ok">integrity_check = ok</span>
+      <span class="mark ok">экспорт и импорт Markdown</span>
+      <span class="mark ok">резервная копия зашифрована и читается</span>
+      <span class="mark ok">интерфейс открывается в терминале</span>
+    </div>
+    <p class="note">
+      Полноэкранный интерфейс проверялся в настоящем псевдо-терминале. На Linux отрисованы заголовок,
+      список записей, теги, шкала настроения и панель предпросмотра. На Windows (ConPTY) проверены также
+      открытие записи по Enter и экран статистики с топом тегов и активностью по месяцам.
+    </p>
+
+    <h3>Перенос базы между операционными системами</h3>
+    <table>
+      <caption>Сверка записи-в-запись</caption>
+      <thead><tr><th>Направление</th><th>Ожидалось записей</th><th>Прочитано</th><th>Содержимое</th><th>SHA-256 файла</th></tr></thead>
+      <tbody>
+        <tr><td>Linux → Windows</td><td>2</td><td>2</td><td class="yes">совпало</td><td>совпадает (4903b7607d3fe754…)</td></tr>
+        <tr><td>Windows → Linux</td><td>2</td><td>2</td><td class="yes">совпало</td><td>совпадает (244191659a939a0c…)</td></tr>
+      </tbody>
+    </table>
+    <p class="note">
+      Существующая база <code>.diary.db</code> (20&nbsp;480 байт, кратно 4096) осталась нетронутой:
+      её резервная копия побайтово идентична исходнику, обычный SQLite её не читает, а SQLCipher
+      с произвольным паролем отказывается открывать — то есть это действительно зашифрованная база.
+      Пароль в коде не хранится, поэтому содержимое именно этого файла проверяется вами командой
+      <code>doctor</code>.
+    </p>
+  </section>
+
+  <section>
+    <h2>Что появилось в проекте</h2>
+    <table>
+      <thead><tr><th>Файл</th><th>Назначение</th></tr></thead>
+      <tbody>
+        <tr><td>TUI.py</td><td>приложение: новый драйвер, фолбэк совместимости, неинтерактивные команды, JSON</td></tr>
+        <tr><td>TUI.py.orig</td><td>исходная версия до правок — для отката</td></tr>
+        <tr><td>requirements.txt</td><td>sqlcipher3 0.6.2, windows-curses по маркеру платформы, Google API</td></tr>
+        <tr><td>install.ps1 / run.ps1</td><td>установка и запуск на Windows</td></tr>
+        <tr><td>install.sh / run.sh</td><td>установка и запуск на Linux</td></tr>
+        <tr><td>tests/</td><td>28 автотестов: шифрование, CRUD, персистентность, экспорт, бэкап</td></tr>
+        <tr><td>scripts/selfcheck.py</td><td>сквозная проверка настоящими процессами приложения</td></tr>
+        <tr><td>scripts/compare_dbs.py</td><td>сверка базы с манифестом, снятым на другой ОС</td></tr>
+        <tr><td>.github/workflows/ci.yml</td><td>CI-матрица: ubuntu-latest + windows-latest × Python 3.10/3.11/3.12</td></tr>
+        <tr><td>README.md</td><td>установка, запуск, путь к базе, перенос, диагностика, откат</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Компромиссы и ограничения</h2>
+    <ul>
+      <li><strong>Версия драйвера зафиксирована</strong> (<code>sqlcipher3==0.6.2</code>) ради воспроизводимости сборки.</li>
+      <li><strong>Google API тянет около 16&nbsp;МБ.</strong> Это сохранение прежнего поведения; без синхронизации эти строки можно удалить.</li>
+      <li><strong>Резервная копия делается через <code>VACUUM INTO</code></strong> — файл согласованный и зашифрованный, но не побайтово равный исходнику. Фолбэк на копирование файла встроен.</li>
+      <li><strong>CI на GitHub не запускался</strong> — репозитория на GitHub у проекта нет; файл workflow готов и заработает после <code>git remote add</code> и <code>push</code>.</li>
+      <li><strong>Проверка TUI на Windows выполнена в ConPTY</strong>, а не в устаревшем <code>conhost.exe</code>.</li>
+      <li><strong>Linux проверялся в WSL2 (Debian)</strong>; использованные колёса — manylinux, то есть переносимые.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Откат</h2>
+    <ol class="steps">
+      <li>Восстановить исходный скрипт: <code>Copy-Item .\TUI.py.orig .\TUI.py -Force</code> (Windows) или <code>cp TUI.py.orig TUI.py</code> (Linux).</li>
+      <li>Вернуть в <code>requirements.txt</code> пакет <code>sqlcipher3-binary</code> — это снова сломает Windows, поэтому только как крайняя мера.</li>
+      <li>Файл базы откатывать не нужно: формат не менялся, база читается и старой, и новой версией.</li>
+      <li>При необходимости восстановить базу из резервной копии, сделанной командой <code>backup</code>.</li>
+    </ol>
+  </section>
+
+  <footer>
+    Отчёт построен только на зафиксированных результатах прогонов: вывод установщика, коды возврата команд,
+    результаты pytest и <code>selfcheck.py</code>, сверка манифестов базы между ОС и наблюдения интерфейса в псевдо-терминале.
+    Непроверенным остаётся содержимое личной базы <code>.diary.db</code>, пароль от которой недоступен инструментам проверки.
+  </footer>
+
+</main>
+</body>
+</html>

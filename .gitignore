@@ -1,0 +1,21 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Личные данные и секреты — никогда не попадают в репозиторий.
+*.db
+*.db.bak
+*.db-wal
+*.db-shm
+.diary_token.pickle
+client_secret.json
+diary_export_*.md
+diary_backup_*.db
+
+# Служебные артефакты проверок
+.selfcheck/
+artifacts/

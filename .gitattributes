@@ -1,0 +1,19 @@
+# Единые правила перевода строк для Windows и Linux.
+* text=auto
+
+# Shell-скрипты обязаны оставаться с LF, иначе bash на Linux их не выполнит.
+*.sh   text eol=lf
+# PowerShell-скрипты наоборот — с CRLF.
+*.ps1  text eol=crlf
+
+*.py   text eol=lf
+*.md   text eol=lf
+*.json text eol=lf
+*.yml  text eol=lf
+
+# Бинарные файлы не трогаем.
+*.png  binary
+*.jpg  binary
+*.db   binary
+*.gz   binary
+*.zip  binary
