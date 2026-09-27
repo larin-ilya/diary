@@ -13,6 +13,7 @@
 """
 import json
 import os
+import re
 import sqlite3
 import subprocess
 import sys
@@ -356,14 +357,14 @@ def test_delivery_files_exist(name):
     assert (ROOT / name).exists(), "отсутствует файл поставки: %s" % name
 
 
-@pytest.mark.parametrize("name", [
-    "docs/screenshots/tui-list.png",
-    "docs/screenshots/tui-stats.png",
-    "docs/screenshots/cli-session.png",
-    "docs/screenshots/selfcheck.png",
-])
-def test_readme_screenshots_exist(name):
-    assert (ROOT / name).exists(), "отсутствует скриншот для README: %s" % name
+def test_readme_screenshots_are_consistent():
+    """Каждый скриншот из README существует, и в папке нет неиспользуемых файлов."""
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    refs = set(re.findall(r"docs/screenshots/([A-Za-z0-9_.\-]+\.png)", readme))
+    present = {p.name for p in (ROOT / "docs" / "screenshots").glob("*.png")}
+    assert refs, "README не ссылается ни на один скриншот"
+    assert refs <= present, "в README ссылки на отсутствующие файлы: %s" % sorted(refs - present)
+    assert present <= refs, "в docs/screenshots есть неиспользуемые файлы: %s" % sorted(present - refs)
 
 
 def test_requirements_pin_cross_platform_driver():
