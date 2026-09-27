@@ -19,3 +19,8 @@ diary_backup_*.db
 # Служебные артефакты проверок
 .selfcheck/
 artifacts/
+
+# Артефакты сборки standalone-версий
+build/
+dist/
+*.spec
